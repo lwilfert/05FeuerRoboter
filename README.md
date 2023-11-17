@@ -6,5 +6,7 @@ to commit sthg: \
 ``` git commit -m "ourFiles" ``` \
 ``` git push origin -u main ``` \
 to pull from remote: \
-``` git pull ```
+``` git pull ``` \
+### local directory: \
+```~/repo```
 
