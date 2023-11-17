@@ -6,3 +6,5 @@ Usage of Git Repo:
 ``` git commit -m "ourFiles" ``` \
 ``` git push origin -u main ``` \
 
+``` git pull ```
+
