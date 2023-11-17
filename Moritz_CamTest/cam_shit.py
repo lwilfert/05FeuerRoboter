@@ -112,7 +112,7 @@ def detect_line():
 # No difference between URI/right and URI/left, so right is always used
 def send_right_request():
     url = f"{URI}/right"
-    body = {"value": 70}
+    body = {"value": 80}
 
     response = requests.post(url, json=body)
     print(response.text)
@@ -123,7 +123,7 @@ def send_right_request():
 
 def send_left_request():
     url = f"{URI}/right"
-    body = {"value": 110}
+    body = {"value": 100}
 
     response = requests.post(url, json=body)
     print(response.text)
@@ -139,7 +139,7 @@ def send_center_request():
 
 def send_start_request():
     url = f"{URI}/go"
-    body = {"value": 0.2}
+    body = {"value": 0.12}
 
     response = requests.post(url, json=body)
     print(response.text)
