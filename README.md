@@ -2,7 +2,7 @@
 
 Usage of Git Repo: 
 
-``` git add . ``` 
+``` git add . ``` \
 ``` git commit -m "ourFiles" ```\
 
 ``` git push origin -u main ```\
