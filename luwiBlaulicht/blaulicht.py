@@ -19,14 +19,14 @@
 # FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 # DEALINGS IN THE SOFTWARE.
 
+
 import RPi.GPIO as GPIO
 import time
 
 # Pin Definitions
-output_pin = 18  # BCM pin 18, BOARD pin 12
+output_pin = 18  # BCM pin 18, BOARD pin 12; dort muss LED angesteckt sein!
 
 def main():
-    # Pin Setup:
     GPIO.setmode(GPIO.BCM)  # BCM pin-numbering scheme from Raspberry Pi
     # set pin as an output pin with optional initial state of HIGH
     GPIO.setup(output_pin, GPIO.OUT, initial=GPIO.HIGH)
