@@ -11,7 +11,7 @@ URI = "http://127.0.0.1:5000"
 
 def send_right_request():
     url = f"{URI}/right"
-    body = {"value": 80}
+    body = {"value": 70}
 
     response = requests.post(url, json=body)
     print(response.text)
@@ -22,7 +22,7 @@ def send_right_request():
 
 def send_left_request():
     url = f"{URI}/right"
-    body = {"value": 100}
+    body = {"value": 110}
 
     response = requests.post(url, json=body)
     print(response.text)
