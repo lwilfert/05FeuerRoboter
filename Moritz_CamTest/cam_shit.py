@@ -5,13 +5,11 @@ import numpy as np
 import requests
 import pyrealsense2 as rs
 from PIL import Image
-import io
+
+URI = "http://127.0.0.1:5000"
 
 
-ip = "http://192.168.171.85:5000"
-
-
-def extract_frames_with_opencv():
+def capture_frames():
     pipe = rs.pipeline()
     config = rs.config()
     config.enable_stream(rs.stream.color, 640, 480, rs.format.bgr8, 60)
@@ -41,8 +39,9 @@ def detect_line():
     config = rs.config()
     config.enable_stream(rs.stream.color, 640, 480, rs.format.bgr8, 60)
     active = False
+    i = 0
 
-    while True:
+    while i < 5:
         if not active:
             pipe.start(config)
             active = True
@@ -84,17 +83,20 @@ def detect_line():
                 frame_center = color_image.shape[1] // 2
                 if cx < frame_center - 40:
                     position = "left"
+                    send_left_request()
                 elif cx > frame_center + 40:
                     position = "right"
+                    send_right_request()
                 else:
                     position = "go"
 
                 print(position)
-                sleep(0.1)
-                # send_control_request(position)
+                sleep(0.5)
+                i += 1
 
-                cv2.drawContours(color_image, [largest_contour], -1, (0, 255, 0), 2)
-                cv2.putText(color_image, position, (cx, cy), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (150, 255, 150), 2)
+                # Draw line in picture
+                # cv2.drawContours(color_image, [largest_contour], -1, (0, 255, 0), 2)
+                # cv2.putText(color_image, position, (cx, cy), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (150, 255, 150), 2)
 
         # # Display the frame
         # cv2.imshow('Frame', img)
@@ -103,26 +105,35 @@ def detect_line():
         #     pipe.stop()
         #     cv2.destroyAllWindows()
         #     break
+        stop_control_request()
 
 
-def send_control_request(request):
-    url = f"{ip}/{request}"
-    body = {"value": 0.2}
+def send_right_request():
+    url = f"{URI}/right"
+    body = {"value": 70}
 
     response = requests.post(url, json=body)
     print(response.text)
 
-    sleep(3)
-    stop_control_request()
+    # sleep(3)
+    # stop_control_request()
+
+
+def send_left_request():
+    url = f"{URI}/right"
+    body = {"value": 110}
+
+    response = requests.post(url, json=body)
+    print(response.text)
 
 
 def stop_control_request():
-    url = f"{ip}/stop"
+    url = f"{URI}/stop"
 
     response = requests.post(url)
     print(response.text)
 
 
 if __name__ == '__main__':
-    # extract_frames_with_opencv()
+    # capture_frames()
     detect_line()
