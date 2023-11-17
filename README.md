@@ -5,6 +5,6 @@ to commit sthg:
 ``` git add . ``` \
 ``` git commit -m "ourFiles" ``` \
 ``` git push origin -u main ``` \
-to pull from remote: 
+to pull from remote: \
 ``` git pull ```
 
