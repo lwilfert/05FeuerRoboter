@@ -106,7 +106,7 @@ def detect_line():
         #     pipe.stop()
         #     cv2.destroyAllWindows()
         #     break
-        stop_control_request()
+        send_stop_request()
 
 
 # No difference between URI/right and URI/left, so right is always used
@@ -137,7 +137,14 @@ def send_center_request():
     print(response.text)
 
 
-def stop_control_request():
+def send_start_request():
+    url = f"{URI}/go"
+
+    response = requests.post(url)
+    print(response.text)
+
+
+def send_stop_request():
     url = f"{URI}/stop"
 
     response = requests.post(url)
