@@ -139,8 +139,9 @@ def send_center_request():
 
 def send_start_request():
     url = f"{URI}/go"
+    body = {"value": 0.2}
 
-    response = requests.post(url)
+    response = requests.post(url, json=body)
     print(response.text)
 
 
