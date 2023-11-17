@@ -77,19 +77,19 @@ def detect_line():
                 cx = int(M["m10"] / M["m00"])  # "m10" = sum of all x coordinates
                 cy = int(M["m01"] / M["m00"])  # "m01" = sum of all y coordinate
 
-                send_start_request()
+                # send_start_request()
 
                 # Determine whether the line is on the left, right, or center
                 frame_center = color_image.shape[1] // 2
                 if cx < frame_center - 40:
                     position = "left"
-                    send_left_request()
+                    # send_left_request()
                 elif cx > frame_center + 40:
                     position = "right"
-                    send_right_request()
+                    # send_right_request()
                 else:
                     position = "center"
-                    send_left_request()
+                    # send_left_request()
 
                 print(position)
                 sleep(0.5)
@@ -112,7 +112,7 @@ def detect_line():
 # No difference between URI/right and URI/left, so right is always used
 def send_right_request():
     url = f"{URI}/right"
-    body = {"value": 80}
+    body = {"value": 70}
 
     response = requests.post(url, json=body)
     print(response.text)
@@ -123,7 +123,7 @@ def send_right_request():
 
 def send_left_request():
     url = f"{URI}/right"
-    body = {"value": 100}
+    body = {"value": 110}
 
     response = requests.post(url, json=body)
     print(response.text)
