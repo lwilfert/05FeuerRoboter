@@ -106,7 +106,7 @@ def detect_line():
         #     pipe.stop()
         #     cv2.destroyAllWindows()
         #     break
-        send_stop_request()
+        # send_stop_request()
 
 
 # No difference between URI/right and URI/left, so right is always used
