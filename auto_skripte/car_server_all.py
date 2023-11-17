@@ -35,7 +35,7 @@ kit.continuous_servo[MOTOR].throttle = current_speed
 kit.servo[SERVO].angle = FORWARD
 kit.continuous_servo[MOTOR].throttle = STOP
 
-pipe = rs.pipeline()
+# pipe = rs.pipeline()
 config = rs.config()
 config.enable_stream(rs.stream.color, 640, 480, rs.format.bgr8, 60)
 active = False
@@ -45,7 +45,10 @@ active = False
 
 img_queue = multiprocessing.Queue(maxsize=1)
 
+
 def cam_process(queue):
+    return
+
     global active
     while True:
         if not active:
@@ -67,18 +70,21 @@ def cam_process(queue):
         #        cv2.putText(color_image, f'{box[-1]:.2f}', (x1, y1 - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0,255,0), 2)
 
         img = Image.fromarray(cv2.cvtColor(color_image, cv2.COLOR_BGR2RGB))
-        
+
         if queue.empty():
             queue.put(img)
+
 
 def exit():
     kit.continuous_servo[MOTOR].throttle = STOP
     kit.servo[SERVO].angle = FORWARD
     print('\nexiting program ', time.strftime('%d.%m.%Y %H:%M:%S', time.localtime()))
     cv2.destroyAllWindows()
-    
+
+
 def forward():
     kit.servo[SERVO].angle = FORWARD
+
 
 def right(angle=None):
     global current_angle
@@ -87,6 +93,7 @@ def right(angle=None):
     kit.servo[SERVO].angle = current_angle
     print(f"Turning Right with angle: {kit.servo[SERVO].angle}")
 
+
 def left(angle=None):
     global current_angle
     if angle is not None:
@@ -94,8 +101,10 @@ def left(angle=None):
     kit.servo[SERVO].angle = current_angle
     print(f"Turning Left with angle: {kit.servo[SERVO].angle}")
 
+
 def stop():
     kit.continuous_servo[MOTOR].throttle = STOP
+
 
 def go(speed=None):
     global isForward, current_speed
@@ -104,6 +113,7 @@ def go(speed=None):
     isForward = True
     kit.continuous_servo[MOTOR].throttle = current_speed
     print(f"Current Speed: {current_speed}")
+
 
 def backward():
     global isForward
@@ -115,9 +125,10 @@ def backward():
         kit.continuous_servo[MOTOR].throttle = -0.1
         print("Backward +isForward=false")
         isForward = False
-    else: 
+    else:
         kit.continuous_servo[MOTOR].throttle = -0.1
         print("Backward")
+
 
 @app.route('/right', methods=['POST'])
 def api_right():
@@ -127,6 +138,7 @@ def api_right():
     right(angle)
     return jsonify({'result': 'success'})
 
+
 @app.route('/left', methods=['POST'])
 def api_left():
     data = request.get_json()
@@ -135,15 +147,18 @@ def api_left():
     left(angle)
     return jsonify({'result': 'success'})
 
+
 @app.route('/stop', methods=['POST'])
 def api_stop():
     stop()
     return jsonify({'result': 'success'})
-    
+
+
 @app.route('/forward', methods=['POST'])
 def api_forward():
     forward()
     return jsonify({'result': 'success'})
+
 
 @app.route('/go', methods=['POST'])
 def api_go():
@@ -156,16 +171,19 @@ def api_go():
         go()
     return jsonify({'result': 'success'})
 
+
 @app.route('/backward', methods=['POST'])
 def api_backward():
     backward()
     return jsonify({'result': 'success'})
+
 
 @app.route('/exit', methods=['POST'])
 def api_exit():
     print("EXIT!!")
     exit()
     return jsonify({'result': 'success'})
+
 
 @app.route('/cam', methods=['GET'])
 def api_cam():
@@ -175,9 +193,8 @@ def api_cam():
     img_io.seek(0)
     return send_file(img_io, mimetype='image/jpeg')
 
+
 if __name__ == '__main__':
-    cam_process = multiprocessing.Process(target=cam_process, args=(img_queue,))
-    cam_process.start()
+    # cam_process = multiprocessing.Process(target=cam_process, args=(img_queue,))
+    # cam_process.start()
     app.run(debug=False, host='0.0.0.0', port=5000)
-
-
