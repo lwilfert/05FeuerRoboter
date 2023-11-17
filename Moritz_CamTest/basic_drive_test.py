@@ -52,7 +52,13 @@ def send_stop_request():
 
 
 send_start_request()
-send_left_request()
 send_center_request()
+sleep(1)
+send_left_request()
+sleep(1)
 send_right_request()
-send_stop_request()
+sleep(1)
+
+# send_right_request()
+# send_center_request()
+# send_stop_request()
