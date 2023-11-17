@@ -1,7 +1,7 @@
 # 05FeuerRoboter
 
 ## Usage of Git Repo: 
-to commit sthg: 
+to commit sthg: \
 ``` git add . ``` \
 ``` git commit -m "ourFiles" ``` \
 ``` git push origin -u main ``` \
