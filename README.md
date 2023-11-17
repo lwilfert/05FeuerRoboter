@@ -2,9 +2,9 @@
 
 Usage of Git Repo: 
 
-``` git add . ```
+``` git add . ``` \n
 
 ``` git commit -m "ourFiles" ```
-
+\n
 ``` git push origin -u main ```
 
