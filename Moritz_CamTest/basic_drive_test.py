@@ -38,7 +38,7 @@ def send_center_request():
 
 def send_start_request():
     url = f"{URI}/go"
-    body = {"value": 0.12}
+    body = {"value": 0.14}
 
     response = requests.post(url, json=body)
     print(response.text)
@@ -53,13 +53,13 @@ def send_stop_request():
 
 send_start_request()
 send_center_request()
-sleep(2)
+sleep(1)
 send_left_request()
-sleep(2)
+sleep(1)
 send_center_request()
-sleep(2)
+sleep(1)
 send_right_request()
-sleep(2)
+sleep(1)
 send_stop_request()
 
 # send_right_request()
