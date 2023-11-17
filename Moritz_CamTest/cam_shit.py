@@ -50,8 +50,6 @@ def detect_line():
         color_frame = frames.get_color_frame()
         color_image = np.asanyarray(color_frame.get_data())
 
-        # img = Image.fromarray(cv2.cvtColor(color_image, cv2.COLOR_BGR2RGB))
-
         # Convert the frame to HSV color space
         hsv = cv2.cvtColor(color_image, cv2.COLOR_BGR2HSV)
 
@@ -78,6 +76,8 @@ def detect_line():
             if M["m00"] != 0:  # "m00" = area
                 cx = int(M["m10"] / M["m00"])  # "m10" = sum of all x coordinates
                 cy = int(M["m01"] / M["m00"])  # "m01" = sum of all y coordinate
+
+                send_start_request()
 
                 # Determine whether the line is on the left, right, or center
                 frame_center = color_image.shape[1] // 2
