@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+
+
+<html>
+<head>
+    <title>POST Requests</title>
+</head>
+
+<style>
+    /* Button styling */
+    button {
+        padding: 10px 20px;
+        font-size: 16px;
+        border: none;
+        cursor: pointer;
+        border-radius: 5px;
+        transition: background-color 0.3s ease;
+    }
+
+    /* Test Request button style */
+    #testButton {
+        background-color: green;
+        color: white;
+    }
+
+    /* Start Request button style */
+    #startButton {
+        background-color: red;
+        color: white;
+    }
+</style>
+
+
+<body>
+    <label for="timesInput">Enter ID:</label>
+    <input type="number" id="timesInput" placeholder="Enter ID">
+    <button id="testButton" onclick="sendTestRequest()">Send Test Request</button>
+
+    <br><br>
+
+    <label for="startInput">Enter ID to start:</label>
+    <input type="text" id="startInput" placeholder="Enter Start">
+    <button id="startButton" onclick="sendStartRequest()">Send Start Request</button>
+
+    <script>
+        function sendTestRequest() {
+
+            flashButton('testButton');
+
+            var idValue = parseInt(document.getElementById("timesInput").value);
+            var jsonData = JSON.stringify({ "times": idValue });
+
+            var xhr = new XMLHttpRequest();
+            xhr.onreadystatechange = function() {
+                if (xhr.readyState === XMLHttpRequest.DONE) {
+                    if (xhr.status === 200) {
+                        console.log('Test Request successful!');
+                    } else {
+                        console.log('Test Request failed with status:', xhr.status);
+                    }
+                }
+            };
+
+            xhr.open("POST", "http://192.168.171.85:5500/test", true);
+            xhr.setRequestHeader("Content-Type", "application/json");
+            xhr.send(jsonData);
+        }
+
+        function sendStartRequest() {
+
+            flashButton('startButton');
+
+            var startValue = document.getElementById("startInput").value;
+            var jsonData = JSON.stringify({ "id": startValue });
+
+            var xhr = new XMLHttpRequest();
+            xhr.onreadystatechange = function() {
+                if (xhr.readyState === XMLHttpRequest.DONE) {
+                    if (xhr.status === 200) {
+                        console.log('Start Request successful!');
+                    } else {
+                        console.log('Start Request failed with status:', xhr.status);
+                    }
+                }
+            };
+
+            xhr.open("POST", "http://192.168.171.85:5500/start", true);
+            xhr.setRequestHeader("Content-Type", "application/json");
+            xhr.send(jsonData);
+        }
+
+        function flashButton(buttonId) {
+            var button = document.getElementById(buttonId);
+            var originalColor = button.style.backgroundColor;
+            var flashColor = 'yellow';
+
+            // Flash for 5 seconds
+            var flashInterval = setInterval(function() {
+                button.style.backgroundColor = (button.style.backgroundColor === originalColor) ? flashColor : originalColor;
+            }, 500);
+
+            setTimeout(function() {
+                clearInterval(flashInterval);
+                button.style.backgroundColor = originalColor;
+            }, 5000);
+        }
+    </script>
+</body>
+</html>
