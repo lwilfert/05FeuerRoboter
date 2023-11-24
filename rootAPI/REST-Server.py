@@ -15,15 +15,18 @@ def exit():
 
 # Funktionen für die verschiedenen Befehle
 def test(times):
+    start()
     for x in range(times):
         print(x)
-        start()
 
 def start(zielID=0):
     #hier Katy functionality einbinden.
     #zum testen mal blinken:
     script_path = '../luwiBlaulicht/blaulicht.py'
-    subprocess.run(['python3', script_path])
+    blaulicht = subprocess.Popen(['python3', script_path])
+    time.sleep(5)
+    blaulicht.terminate()
+    blaulicht.wait()
 
 
 # REST-Endpunkte für die verschiedenen Befehle
