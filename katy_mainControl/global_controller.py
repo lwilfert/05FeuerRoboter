@@ -10,7 +10,7 @@ from Moritz_CamTest.cam_shit import CameraAnalyst
 from luwiPowerSkript.waterpump import WaterPump
 
 # TODO: only temporary to "compile"
-from katy_intersectionsApi.control import Car, Direction
+from katy_intersectionsApi.legacy.control import Car, Direction
 
 # add parent directory to import space, so we can keep directory structure
 current = os.path.dirname(os.path.realpath(__file__))
