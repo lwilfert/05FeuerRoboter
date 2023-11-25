@@ -1,0 +1,113 @@
+import sys
+import os
+import time
+from enum import Enum
+
+from sirene.player import SoundPlayer
+from luwiBlaulicht.blaulicht import BlueLightSwitch
+from api_adapter import ApiAdapter
+from Moritz_CamTest.cam_shit import CameraAnalyst
+from luwiPowerSkript.waterpump import WaterPump
+
+# TODO: only temporary to "compile"
+from katy_intersectionsApi.control import Car, Direction
+
+# add parent directory to import space, so we can keep directory structure
+current = os.path.dirname(os.path.realpath(__file__))
+parent = os.path.dirname(current)
+sys.path.append(parent)
+
+
+class NotificationMessage(Enum):
+    LEFT = 0
+    RIGHT = 1
+    CENTER = 2
+    INTERSECTION = 3
+    DESTINATION_REACHED = 4
+    FORCE_STOP = 5
+
+
+class GlobalController:
+    home_id = 0
+
+    def __init__(self):
+        self.api_adapter = ApiAdapter(ip="192.168.171.85", port=5000)
+        self.sound_player = SoundPlayer()
+        self.blue_light = BlueLightSwitch()
+        self.line_analyst = CameraAnalyst(self.notify_on_recognition)
+        self.intersection_guide = Car()
+        self.pump_ctl = WaterPump()
+
+        self.needs_privileges = False
+        self.cached_message = None
+
+    def notify_on_recognition(self, message: NotificationMessage):
+        print(message)
+        if message == NotificationMessage.FORCE_STOP:
+            self.api_adapter.send_stop_request()
+
+        if message != self.cached_message:
+            if message == NotificationMessage.FORCE_STOP:
+                self.api_adapter.send_stop_request()
+            elif message == NotificationMessage.RIGHT:
+                self.api_adapter.send_right_request()
+            elif message == NotificationMessage.LEFT:
+                self.api_adapter.send_left_request()
+            elif message == NotificationMessage.CENTER:
+                self.api_adapter.send_center_request()
+            elif message == NotificationMessage.INTERSECTION:
+                self.intersection_guide.find_intersection()
+                direction = self.intersection_guide.get_current_direction()
+                self.turn_after_intersection(direction)
+            elif message == NotificationMessage.DESTINATION_REACHED:
+                self.reach_destination()
+
+    def turn_after_intersection(self, direction):
+        # TODO: check if this is mechanically o.k.
+        if direction == Direction.LEFT:
+            self.api_adapter.send_left_request()
+        elif direction == Direction.RIGHT:
+            self.api_adapter.send_right_request()
+
+    def reach_destination(self):
+        self.api_adapter.send_stop_request()
+        self.blue_light.stop()
+        self.sound_player.stop()
+        self.line_analyst.stop()
+
+        self.pump_ctl.start_pumping_water()
+        # simulate recognition of extinguished fire:
+        time.sleep(3)
+        self.pump_ctl.stop_pumping_water()
+
+        self.u_turn()
+        self.intersection_guide.reach_dest()
+        self.set_destination_home()
+        self.start_drive_to_destination(self.home_id)
+
+
+    def u_turn(self):
+        # TODO: implement mechanical u_turn
+        print("not implemented yet")
+        input("press any key to signalize you manually uturned the car.")
+
+    def start_drive_to_destination(self, destination_id=1):
+        if self.needs_privileges:
+            self.blue_light.start()
+            self.sound_player.start()
+        self.line_analyst.start()
+        self.api_adapter.send_go_request()
+
+    def set_destination_home(self):
+        self.needs_privileges = False
+
+    def set_destination_fire(self):
+        self.needs_privileges = True
+
+
+ctl = GlobalController()
+
+
+def start(destination_id=1):
+    ctl.set_destination_fire()
+    ctl.start_drive_to_destination(destination_id)
