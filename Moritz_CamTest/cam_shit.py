@@ -1,157 +1,119 @@
 from time import sleep
+from turtle import pos
 
 import cv2
 import numpy as np
-import requests
 import pyrealsense2 as rs
 from PIL import Image
 
-URI = "http://127.0.0.1:5000"
+from katy_mainControl.abstract_component import Component
+from katy_mainControl.global_controller import NotificationMessage
+
+class CameraAnalyst(Component):
+    def __init__(self, listener):
+        super().__init__()
+        self.listener = listener
+
+    def get_target(self):
+        return self.detect_line
+
+    def capture_frames(self):
+        pipe = rs.pipeline()
+        config = rs.config()
+        config.enable_stream(rs.stream.color, 640, 480, rs.format.bgr8, 60)
+        active = False
+
+        i = 0
+
+        while i < 10:
+            if not active:
+                pipe.start(config)
+                active = True
+
+            frames = pipe.wait_for_frames()
+            color_frame = frames.get_color_frame()
+            color_image = np.asanyarray(color_frame.get_data())
+
+            img = Image.fromarray(cv2.cvtColor(color_image, cv2.COLOR_BGR2RGB))
+
+            img.save(f"/home/jens/Desktop/Moritz_CamTest/{i}.jpg", 'JPEG', quality=50)
+            print("cool funktioniert")
+
+            i += 1
 
 
-def capture_frames():
-    pipe = rs.pipeline()
-    config = rs.config()
-    config.enable_stream(rs.stream.color, 640, 480, rs.format.bgr8, 60)
-    active = False
+    def detect_line(self):
+        pipe = rs.pipeline()
+        config = rs.config()
+        config.enable_stream(rs.stream.color, 640, 480, rs.format.bgr8, 60)
+        active = False
+        i = 0
 
-    i = 0
+        while True:
+            if not active:
+                pipe.start(config)
+                active = True
 
-    while i < 10:
-        if not active:
-            pipe.start(config)
-            active = True
+            frames = pipe.wait_for_frames()
+            color_frame = frames.get_color_frame()
+            color_image = np.asanyarray(color_frame.get_data())
 
-        frames = pipe.wait_for_frames()
-        color_frame = frames.get_color_frame()
-        color_image = np.asanyarray(color_frame.get_data())
+            # Convert the frame to HSV color space
+            hsv = cv2.cvtColor(color_image, cv2.COLOR_BGR2HSV)
 
-        img = Image.fromarray(cv2.cvtColor(color_image, cv2.COLOR_BGR2RGB))
+            # Define lower and upper threshold for yellow in HSV
+            lower_yellow = np.array([20, 100, 100])
+            upper_yellow = np.array([40, 255, 255])
 
-        img.save(f"/home/jens/Desktop/Moritz_CamTest/{i}.jpg", 'JPEG', quality=50)
-        print("cool funktioniert")
+            # Create a mask to isolate the yellow regions
+            mask = cv2.inRange(hsv, lower_yellow, upper_yellow)
 
-        i += 1
+            # Apply morphological operations to clean up the mask
+            kernel = np.ones((5, 5), np.uint8)
+            mask = cv2.morphologyEx(mask, cv2.MORPH_CLOSE, kernel)
 
+            # Find contours in the mask
+            contours, _ = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
 
-def detect_line():
-    pipe = rs.pipeline()
-    config = rs.config()
-    config.enable_stream(rs.stream.color, 640, 480, rs.format.bgr8, 60)
-    active = False
-    i = 0
+            if len(contours) > 0:
+                # Sort contours by area and select the largest one
+                largest_contour = max(contours, key=cv2.contourArea)
 
-    while True:
-        if not active:
-            pipe.start(config)
-            active = True
+                # Calculate the center of the yellow line
+                M = cv2.moments(largest_contour)
+                if M["m00"] != 0:  # "m00" = area
+                    cx = int(M["m10"] / M["m00"])  # "m10" = sum of all x coordinates
+                    cy = int(M["m01"] / M["m00"])  # "m01" = sum of all y coordinate
 
-        frames = pipe.wait_for_frames()
-        color_frame = frames.get_color_frame()
-        color_image = np.asanyarray(color_frame.get_data())
+                    # send_start_request()
 
-        # Convert the frame to HSV color space
-        hsv = cv2.cvtColor(color_image, cv2.COLOR_BGR2HSV)
+                    # Determine whether the line is on the left, right, or center
+                    frame_center = color_image.shape[1] // 2
+                    if cx < frame_center - 40:
+                        position = NotificationMessage.LEFT
+                        # send_left_request()
+                    elif cx > frame_center + 40:
+                        position = NotificationMessage.RIGHT
+                        # send_right_request()
+                    else:
+                        position = NotificationMessage.CENTER
+                        # send_left_request()
 
-        # Define lower and upper threshold for yellow in HSV
-        lower_yellow = np.array([20, 100, 100])
-        upper_yellow = np.array([40, 255, 255])
+                    self.listener.notify_on_recognition(position)
+                    sleep(0.5)
+                    i += 1
 
-        # Create a mask to isolate the yellow regions
-        mask = cv2.inRange(hsv, lower_yellow, upper_yellow)
+                    # Draw line in picture
+                    # cv2.drawContours(color_image, [largest_contour], -1, (0, 255, 0), 2)
+                    # cv2.putText(color_image, position, (cx, cy), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (150, 255, 150), 2)
 
-        # Apply morphological operations to clean up the mask
-        kernel = np.ones((5, 5), np.uint8)
-        mask = cv2.morphologyEx(mask, cv2.MORPH_CLOSE, kernel)
-
-        # Find contours in the mask
-        contours, _ = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
-
-        if len(contours) > 0:
-            # Sort contours by area and select the largest one
-            largest_contour = max(contours, key=cv2.contourArea)
-
-            # Calculate the center of the yellow line
-            M = cv2.moments(largest_contour)
-            if M["m00"] != 0:  # "m00" = area
-                cx = int(M["m10"] / M["m00"])  # "m10" = sum of all x coordinates
-                cy = int(M["m01"] / M["m00"])  # "m01" = sum of all y coordinate
-
-                # send_start_request()
-
-                # Determine whether the line is on the left, right, or center
-                frame_center = color_image.shape[1] // 2
-                if cx < frame_center - 40:
-                    position = "left"
-                    # send_left_request()
-                elif cx > frame_center + 40:
-                    position = "right"
-                    # send_right_request()
-                else:
-                    position = "center"
-                    # send_left_request()
-
-                print(position)
-                sleep(0.5)
-                i += 1
-
-                # Draw line in picture
-                # cv2.drawContours(color_image, [largest_contour], -1, (0, 255, 0), 2)
-                # cv2.putText(color_image, position, (cx, cy), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (150, 255, 150), 2)
-
-        # # Display the frame
-        # cv2.imshow('Frame', img)
-        #
-        # if cv2.waitKey(1) & 0xFF == 27:  # Press 'Esc' key to exit
-        #     pipe.stop()
-        #     cv2.destroyAllWindows()
-        #     break
-        # send_stop_request()
+            # # Display the frame
+            # cv2.imshow('Frame', img)
+            #
+            # if cv2.waitKey(1) & 0xFF == 27:  # Press 'Esc' key to exit
+            #     pipe.stop()
+            #     cv2.destroyAllWindows()
+            #     break
+            # send_stop_request()
 
 
-# No difference between URI/right and URI/left, so right is always used
-def send_right_request():
-    url = f"{URI}/right"
-    body = {"value": 70}
-
-    response = requests.post(url, json=body)
-    print(response.text)
-
-    # sleep(3)
-    # stop_control_request()
-
-
-def send_left_request():
-    url = f"{URI}/right"
-    body = {"value": 110}
-
-    response = requests.post(url, json=body)
-    print(response.text)
-
-
-def send_center_request():
-    url = f"{URI}/right"
-    body = {"value": 90}
-
-    response = requests.post(url, json=body)
-    print(response.text)
-
-
-def send_start_request():
-    url = f"{URI}/go"
-    body = {"value": 0.12}
-
-    response = requests.post(url, json=body)
-    print(response.text)
-
-
-def send_stop_request():
-    url = f"{URI}/stop"
-
-    response = requests.post(url)
-    print(response.text)
-
-
-if __name__ == '__main__':
-    # capture_frames()
-    detect_line()

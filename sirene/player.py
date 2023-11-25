@@ -1,16 +1,13 @@
 from playsound import playsound
 import os
-import time
-from killable_thread import KillableThread
 
+from katy_mainControl.abstract_component import Component
 
-class Player:
-    def __init__(self):
-        self.thread: KillableThread = KillableThread(target=self.play_sound)
-        # check bluetooth connection
+base_path = "."
 
-    def start(self):
-        self.thread.start()
+class SoundPlayer(Component):
+    def get_target(self):
+        return self.play_sound
 
     @staticmethod
     def play_sound():
@@ -18,39 +15,14 @@ class Player:
         while True:
             if i >= 100000:
                 i = 0
-                Player.connectBT()
-            playsound('./martinshorn.mp3')
+                SoundPlayer.connect_bt()
+            playsound(f'{base_path}/martinshorn.mp3')
             i += 1
 
-    def stop(self):
-        print("stopped")
-        self.thread.kill()
-        self.thread = KillableThread(target = self.play_sound)
-
-
     @staticmethod
-    def connectBT():
+    def connect_bt():
         output = os.popen("sudo bluetoothctl info 12:0E:55:9D:45:2C | grep Connected |  awk -F ' ' '{print $2}'").read().strip()
         print(f'Speaker still connected: {output}')
         if 'yes' not in output:
            print('(re)connecting speaker')
-           os.system('./connectSpeaker.sh')
-
-
-def main():
-    # in drive skript keep instance of Player
-    player = Player()
-    player.start()
-
-    time.sleep(3)
-    # after destination is reached:
-    player.stop()
-    time.sleep(3)
-    player.start()
-    time.sleep(3)
-    player.stop()
-
-
-if __name__ == "__main__":
-    main()
-
+           os.system(f'{base_path}/connectSpeaker.sh')
