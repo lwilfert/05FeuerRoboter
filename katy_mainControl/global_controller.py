@@ -10,7 +10,7 @@ from Moritz_CamTest.cam_shit import CameraAnalyst
 from luwiPowerSkript.waterpump import WaterPump
 
 # TODO: only temporary to "compile"
-from katy_intersectionsApi.legacy.control import Car, Direction
+from katy_intersectionsApi.intersection_guide import IntersectionGuide, Direction
 
 # add parent directory to import space, so we can keep directory structure
 current = os.path.dirname(os.path.realpath(__file__))
@@ -35,7 +35,7 @@ class GlobalController:
         self.sound_player = SoundPlayer()
         self.blue_light = BlueLightSwitch()
         self.line_analyst = CameraAnalyst(self.notify_on_recognition)
-        self.intersection_guide = Car()
+        self.intersection_guide = IntersectionGuide()
         self.pump_ctl = WaterPump()
 
         self.needs_privileges = False
