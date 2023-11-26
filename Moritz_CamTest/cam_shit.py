@@ -9,114 +9,98 @@ from PIL import Image
 from katy_mainControl.abstract_component import Component
 from katy_mainControl.global_controller import NotificationMessage
 
+
 class CameraAnalyst(Component):
     def __init__(self, listener):
         super().__init__()
         self.listener = listener
 
     def get_target(self):
-        return self.detect_line
+        return self.camera_stream()
 
-    def capture_frames(self):
+    def camera_stream(self):
         pipe = rs.pipeline()
         config = rs.config()
         config.enable_stream(rs.stream.color, 640, 480, rs.format.bgr8, 60)
-        active = False
 
-        i = 0
+        try:
+            pipe.start(config)
+            while True:
+                frames = pipe.wait_for_frames()
+                color_frame = frames.get_color_frame()
+                color_image = np.asanyarray(color_frame.get_data())
 
-        while i < 10:
-            if not active:
-                pipe.start(config)
-                active = True
+                self.detect_line(color_image)
+                self.detect_pattern(color_image)
 
-            frames = pipe.wait_for_frames()
-            color_frame = frames.get_color_frame()
-            color_image = np.asanyarray(color_frame.get_data())
+                # img = Image.fromarray(cv2.cvtColor(color_image, cv2.COLOR_BGR2RGB))
+                # img.save(f"/home/jens/Desktop/Moritz_CamTest/{i}.jpg", 'JPEG', quality=50)
 
-            img = Image.fromarray(cv2.cvtColor(color_image, cv2.COLOR_BGR2RGB))
+        except (ValueError, FileNotFoundError) as error:
+            print(error)
 
-            img.save(f"/home/jens/Desktop/Moritz_CamTest/{i}.jpg", 'JPEG', quality=50)
-            print("cool funktioniert")
+        finally:
+            pipe.stop()
+            cv2.destroyAllWindows()
 
-            i += 1
+    def detect_line(self, color_image):
+        # Convert the frame to HSV color space
+        hsv = cv2.cvtColor(color_image, cv2.COLOR_BGR2HSV)
 
+        # Define lower and upper threshold for yellow in HSV
+        lower_yellow = np.array([20, 100, 100])
+        upper_yellow = np.array([40, 255, 255])
 
-    def detect_line(self):
-        pipe = rs.pipeline()
-        config = rs.config()
-        config.enable_stream(rs.stream.color, 640, 480, rs.format.bgr8, 60)
-        active = False
-        i = 0
+        # Create a mask to isolate the yellow regions
+        mask = cv2.inRange(hsv, lower_yellow, upper_yellow)
 
-        while True:
-            if not active:
-                pipe.start(config)
-                active = True
+        # Apply morphological operations to clean up the mask
+        kernel = np.ones((5, 5), np.uint8)
+        mask = cv2.morphologyEx(mask, cv2.MORPH_CLOSE, kernel)
 
-            frames = pipe.wait_for_frames()
-            color_frame = frames.get_color_frame()
-            color_image = np.asanyarray(color_frame.get_data())
+        # Find contours in the mask
+        contours, _ = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
 
-            # Convert the frame to HSV color space
-            hsv = cv2.cvtColor(color_image, cv2.COLOR_BGR2HSV)
+        if len(contours) > 0:
+            # Sort contours by area and select the largest one
+            largest_contour = max(contours, key=cv2.contourArea)
 
-            # Define lower and upper threshold for yellow in HSV
-            lower_yellow = np.array([20, 100, 100])
-            upper_yellow = np.array([40, 255, 255])
+            # Calculate the center of the yellow line
+            M = cv2.moments(largest_contour)
+            if M["m00"] != 0:  # "m00" = area
+                cx = int(M["m10"] / M["m00"])  # "m10" = sum of all x coordinates
+                cy = int(M["m01"] / M["m00"])  # "m01" = sum of all y coordinate
 
-            # Create a mask to isolate the yellow regions
-            mask = cv2.inRange(hsv, lower_yellow, upper_yellow)
+                # send_start_request()
 
-            # Apply morphological operations to clean up the mask
-            kernel = np.ones((5, 5), np.uint8)
-            mask = cv2.morphologyEx(mask, cv2.MORPH_CLOSE, kernel)
+                # Determine whether the line is on the left, right, or center
+                frame_center = color_image.shape[1] // 2
+                if cx < frame_center - 40:
+                    position = NotificationMessage.LEFT
+                    # send_left_request()
+                elif cx > frame_center + 40:
+                    position = NotificationMessage.RIGHT
+                    # send_right_request()
+                else:
+                    position = NotificationMessage.CENTER
+                    # send_left_request()
 
-            # Find contours in the mask
-            contours, _ = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+                self.listener.notify_on_recognition(position)
+                sleep(0.5)
 
-            if len(contours) > 0:
-                # Sort contours by area and select the largest one
-                largest_contour = max(contours, key=cv2.contourArea)
+                # Draw line in picture
+                # cv2.drawContours(color_image, [largest_contour], -1, (0, 255, 0), 2)
+                # cv2.putText(color_image, position, (cx, cy), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (150, 255, 150), 2)
 
-                # Calculate the center of the yellow line
-                M = cv2.moments(largest_contour)
-                if M["m00"] != 0:  # "m00" = area
-                    cx = int(M["m10"] / M["m00"])  # "m10" = sum of all x coordinates
-                    cy = int(M["m01"] / M["m00"])  # "m01" = sum of all y coordinate
-
-                    # send_start_request()
-
-                    # Determine whether the line is on the left, right, or center
-                    frame_center = color_image.shape[1] // 2
-                    if cx < frame_center - 40:
-                        position = NotificationMessage.LEFT
-                        # send_left_request()
-                    elif cx > frame_center + 40:
-                        position = NotificationMessage.RIGHT
-                        # send_right_request()
-                    else:
-                        position = NotificationMessage.CENTER
-                        # send_left_request()
-
-                    self.listener.notify_on_recognition(position)
-                    sleep(0.5)
-                    i += 1
-
-                    self.detect_pattern(color_image)
-
-                    # Draw line in picture
-                    # cv2.drawContours(color_image, [largest_contour], -1, (0, 255, 0), 2)
-                    # cv2.putText(color_image, position, (cx, cy), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (150, 255, 150), 2)
-
-            # # Display the frame
-            # cv2.imshow('Frame', img)
-            #
-            # if cv2.waitKey(1) & 0xFF == 27:  # Press 'Esc' key to exit
-            #     pipe.stop()
-            #     cv2.destroyAllWindows()
-            #     break
-            # send_stop_request()
+        # If this ever gets used again then refactor into camera_stream
+        # # Display the frame
+        # cv2.imshow('Frame', img)
+        #
+        # if cv2.waitKey(1) & 0xFF == 27:  # Press 'Esc' key to exit
+        #     pipe.stop()
+        #     cv2.destroyAllWindows()
+        #     break
+        # send_stop_request()
 
     def detect_pattern(self, camera_image):
         pattern_image = cv2.imread("flamme.jpg")
