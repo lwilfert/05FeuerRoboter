@@ -109,6 +109,33 @@ def detect_line():
         # send_stop_request()
 
 
+def detect_pattern(camera_image):
+    pattern_image = cv2.imread("flamme.jpg")
+
+    # Check if the pattern image is loaded successfully
+    if pattern_image is None:
+        raise FileNotFoundError(f"Error: Unable to load the pattern image at '{pattern_image}'.")
+
+    # Check if the input image and pattern image have compatible sizes
+    if camera_image.shape[0] < pattern_image.shape[0] or camera_image.shape[1] < pattern_image.shape[1]:
+        raise ValueError("Error: The input image is smaller than the pattern image.")
+
+    # Convert images to grayscale
+    input_gray = cv2.cvtColor(camera_image, cv2.COLOR_BGR2GRAY)
+    pattern_gray = cv2.cvtColor(pattern_image, cv2.COLOR_BGR2GRAY)
+
+    # Use template matching
+    result = cv2.matchTemplate(input_gray, pattern_gray, cv2.TM_CCOEFF_NORMED)
+
+    # Set a threshold to determine if the pattern is found
+    threshold = 0.8
+    locations = np.where(result >= threshold)
+
+    # If any match is found, return True
+    result = locations[0].size > 0
+    print(f"Pattern detected: {result}")
+
+
 # No difference between URI/right and URI/left, so right is always used
 def send_right_request():
     url = f"{URI}/right"
@@ -155,3 +182,4 @@ def send_stop_request():
 if __name__ == '__main__':
     # capture_frames()
     detect_line()
+    detect_pattern()
