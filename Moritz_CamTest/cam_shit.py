@@ -124,9 +124,6 @@ class CameraAnalyst(Component):
         threshold = 0.8
         locations = np.where(result >= threshold)
 
-        # If any match is found, return True
-        result = locations[0].size > 0
-        print(f"Pattern detected: {result}")
-
-        if result:
+        # If any match is found, send destination reached message
+        if locations[0].size > 0:
             self.listener.notify_on_recognition(NotificationMessage.DESTINATION_REACHED)
