@@ -41,6 +41,8 @@ class GlobalController:
             self.api_adapter.send_stop_request()
 
         if message != self.cached_message:
+            print("not cached -> execute")
+            self.cached_message = message
             if message == NotificationMessage.FORCE_STOP:
                 self.api_adapter.send_stop_request()
             elif message == NotificationMessage.RIGHT:
