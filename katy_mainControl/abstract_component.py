@@ -1,6 +1,16 @@
 from abc import abstractmethod
+from enum import Enum
 
 from katy_mainControl.killable_thread import KillableThread
+
+
+class NotificationMessage(Enum):
+    LEFT = 0
+    RIGHT = 1
+    CENTER = 2
+    INTERSECTION = 3
+    DESTINATION_REACHED = 4
+    FORCE_STOP = 5
 
 
 class Component:

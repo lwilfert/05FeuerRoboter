@@ -6,8 +6,7 @@ import numpy as np
 import pyrealsense2 as rs
 from PIL import Image
 
-from katy_mainControl.abstract_component import Component
-from katy_mainControl.global_controller import NotificationMessage
+from katy_mainControl.abstract_component import Component, NotificationMessage
 
 
 class CameraAnalyst(Component):

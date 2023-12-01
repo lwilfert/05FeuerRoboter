@@ -1,7 +1,7 @@
 import sys
 import os
 import time
-from enum import Enum
+from katy_mainControl.abstract_component import NotificationMessage
 
 # add parent directory to import space, so we can keep directory structure
 current = os.path.dirname(os.path.realpath(__file__))
@@ -16,16 +16,6 @@ from luwiPowerSkript.waterpump import WaterPump
 
 # TODO: only temporary to "compile"
 from katy_intersectionsApi.intersection_guide import IntersectionGuide, Direction
-
-
-
-class NotificationMessage(Enum):
-    LEFT = 0
-    RIGHT = 1
-    CENTER = 2
-    INTERSECTION = 3
-    DESTINATION_REACHED = 4
-    FORCE_STOP = 5
 
 
 class GlobalController:
