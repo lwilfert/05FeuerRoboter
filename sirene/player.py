@@ -6,6 +6,7 @@ from katy_mainControl.abstract_component import Component
 
 class SoundPlayer(Component):
     def __init__(self, path):
+        super().__init__()
         self.base_path = path
 
     def get_target(self):
