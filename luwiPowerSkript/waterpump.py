@@ -6,6 +6,7 @@ off_path = "../luwiPowerSkript/powerWaterOff.sh"
 
 class WaterPump:
     def start_pumping_water(self):
+        print("arnie")
         os.popen(on_path)
         print("pumping")
 
