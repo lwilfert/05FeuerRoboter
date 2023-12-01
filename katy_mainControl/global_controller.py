@@ -3,6 +3,11 @@ import os
 import time
 from enum import Enum
 
+# add parent directory to import space, so we can keep directory structure
+current = os.path.dirname(os.path.realpath(__file__))
+parent = os.path.dirname(current)
+sys.path.append(parent)
+
 from sirene.player import SoundPlayer
 from luwiBlaulicht.blaulicht import BlueLightSwitch
 from api_adapter import ApiAdapter
@@ -12,10 +17,6 @@ from luwiPowerSkript.waterpump import WaterPump
 # TODO: only temporary to "compile"
 from katy_intersectionsApi.intersection_guide import IntersectionGuide, Direction
 
-# add parent directory to import space, so we can keep directory structure
-current = os.path.dirname(os.path.realpath(__file__))
-parent = os.path.dirname(current)
-sys.path.append(parent)
 
 
 class NotificationMessage(Enum):
