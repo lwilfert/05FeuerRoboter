@@ -65,12 +65,13 @@ class GlobalController:
 
     def reach_destination(self):
         self.api_adapter.send_stop_request()
-        self.blue_light.stop()
         self.sound_player.stop()
+        self.blue_light.stop()
         self.line_analyst.stop()
 
         self.pump_ctl.start_pumping_water()
         # simulate recognition of extinguished fire:
+        print("exstinguishing...")
         time.sleep(3)
         self.pump_ctl.stop_pumping_water()
 
