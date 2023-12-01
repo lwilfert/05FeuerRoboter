@@ -17,13 +17,13 @@ class BlueLightSwitch(Component):
         # set pin as an output pin with optional initial state of HIGH
         GPIO.setup(BlueLightSwitch.output_pin, GPIO.OUT, initial=GPIO.HIGH)
 
-        print("Starting demo now! Press CTRL+C to exit")
+        # print("Starting demo now! Press CTRL+C to exit")
         curr_value = GPIO.HIGH
         try:
             while True:
                 time.sleep(1)
                 # Toggle the output every second
-                print("Outputting {} to pin {}".format(curr_value, BlueLightSwitch.output_pin))
+                # print("Outputting {} to pin {}".format(curr_value, BlueLightSwitch.output_pin))
                 GPIO.output(BlueLightSwitch.output_pin, curr_value)
                 curr_value ^= GPIO.HIGH
         finally:
