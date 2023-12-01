@@ -36,29 +36,24 @@ class GlobalController:
         self.cached_message = None
 
     def notify_on_recognition(self, message: NotificationMessage):
-        if message == NotificationMessage.FORCE_STOP:
+        if message.value == NotificationMessage.FORCE_STOP.value:
             self.api_adapter.send_stop_request()
 
-        print(f"{message} [cached was: {self.cached_message}]")
-        if message != self.cached_message:
-            print("not cached -> execute")
-            print(f"types: {type(message)}, {type(NotificationMessage.LEFT)}, {type(message)==type(NotificationMessage.LEFT)}")
-            print(f"values: {message.value}, {NotificationMessage.LEFT.value}, {message.value == NotificationMessage.LEFT.value}")
+        if message.value != self.cached_message.value:
             self.cached_message = message
-            if message == NotificationMessage.FORCE_STOP:
+            if message.value == NotificationMessage.FORCE_STOP.value:
                 self.api_adapter.send_stop_request()
-            elif message == NotificationMessage.RIGHT:
+            elif message.value == NotificationMessage.RIGHT.value:
                 self.api_adapter.send_right_request()
-            elif message == NotificationMessage.LEFT:
-                print("received left")
+            elif message.value == NotificationMessage.LEFT.value:
                 self.api_adapter.send_left_request()
-            elif message == NotificationMessage.CENTER:
+            elif message.value == NotificationMessage.CENTER.value:
                 self.api_adapter.send_center_request()
-            elif message == NotificationMessage.INTERSECTION:
+            elif message.value == NotificationMessage.INTERSECTION.value:
                 self.intersection_guide.find_intersection()
                 direction = self.intersection_guide.get_current_direction()
                 self.turn_after_intersection(direction)
-            elif message == NotificationMessage.DESTINATION_REACHED:
+            elif message.value == NotificationMessage.DESTINATION_REACHED.value:
                 self.reach_destination()
 
     def turn_after_intersection(self, direction):
@@ -106,8 +101,6 @@ class GlobalController:
 
 
 ctl = GlobalController()
-var = NotificationMessage.RIGHT
-print(var == NotificationMessage.RIGHT)
 
 
 def start(destination_id=1):
