@@ -28,6 +28,7 @@ class GlobalController:
         self.sound_player.connect_bt()
         self.blue_light = BlueLightSwitch()
         print("blue light init finished")
+        # TODO: fix dass es sich nicht selber killt wenn stop gecallt wird
         self.line_analyst = CameraAnalyst(self)
         self.intersection_guide = IntersectionGuide()
         self.pump_ctl = WaterPump()
@@ -68,7 +69,7 @@ class GlobalController:
         self.api_adapter.send_stop_request()
         self.sound_player.stop()
         self.blue_light.stop()
-        # self.line_analyst.stop()
+        self.line_analyst.stop()
 
         print("foo")
         self.pump_ctl.start_pumping_water()
