@@ -28,7 +28,7 @@ class GlobalController:
         self.sound_player.connect_bt()
         self.blue_light = BlueLightSwitch()
         print("blue light init finished")
-        self.line_analyst = CameraAnalyst(self.notify_on_recognition)
+        self.line_analyst = CameraAnalyst(self)
         self.intersection_guide = IntersectionGuide()
         self.pump_ctl = WaterPump()
 
