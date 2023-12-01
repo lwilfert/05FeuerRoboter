@@ -12,7 +12,7 @@ class BlueLightSwitch(Component):
         print(f"initialized blue light {self.output_pin}")
 
     def get_target(self):
-        return self.blink_led()
+        return self.blink_led
 
     def blink_led(self):
         GPIO.setmode(GPIO.BCM)  # BCM pin-numbering scheme from Raspberry Pi
