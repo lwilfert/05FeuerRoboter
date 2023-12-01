@@ -9,6 +9,7 @@ class BlueLightSwitch(Component):
     def __init__(self):
         super().__init__()
         self.output_pin = 18
+        print(f"initialized blue light {self.output_pin}")
 
     def get_target(self):
         return self.blink_led()
