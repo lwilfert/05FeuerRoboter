@@ -23,7 +23,7 @@ class Component:
         ...
 
     def start(self):
-        print(f"started {str(self.get_target())}")
+        print(f"started")
         self.thread.start()
 
     def stop(self):
