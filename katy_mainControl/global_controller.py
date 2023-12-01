@@ -90,6 +90,7 @@ class GlobalController:
             self.blue_light.start()
             self.sound_player.start()
         self.line_analyst.start()
+        print("goo")
         self.api_adapter.send_go_request()
 
     def set_destination_home(self):
