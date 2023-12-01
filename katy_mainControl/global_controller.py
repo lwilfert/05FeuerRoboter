@@ -27,6 +27,7 @@ class GlobalController:
         self.sound_player = SoundPlayer("/home/jens/repo/sirene")
         self.sound_player.connect_bt()
         self.blue_light = BlueLightSwitch()
+        print("blue light init finished")
         self.line_analyst = CameraAnalyst(self.notify_on_recognition)
         self.intersection_guide = IntersectionGuide()
         self.pump_ctl = WaterPump()
@@ -104,3 +105,6 @@ ctl = GlobalController()
 def start(destination_id=1):
     ctl.set_destination_fire()
     ctl.start_drive_to_destination(destination_id)
+
+
+start()
