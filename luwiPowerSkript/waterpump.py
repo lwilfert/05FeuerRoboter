@@ -1,7 +1,7 @@
 import os
 
-on_path = "../luwiPowerSkript/powerWaterOn.sh"
-off_path = "../luwiPowerSkript/powerWaterOff.sh"
+on_path = "/home/jens/repo/luwiPowerSkript/powerWaterOn.sh"
+off_path = "/home/jens/repo/luwiPowerSkript/powerWaterOff.sh"
 
 
 class WaterPump:

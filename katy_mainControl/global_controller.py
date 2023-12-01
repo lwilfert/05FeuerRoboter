@@ -69,6 +69,7 @@ class GlobalController:
         self.blue_light.stop()
         self.line_analyst.stop()
 
+        print("foo")
         self.pump_ctl.start_pumping_water()
         # simulate recognition of extinguished fire:
         print("exstinguishing...")
