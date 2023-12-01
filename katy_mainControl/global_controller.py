@@ -104,6 +104,8 @@ class GlobalController:
 
 
 ctl = GlobalController()
+var = NotificationMessage.LEFT
+print(var == NotificationMessage.LEFT)
 
 
 def start(destination_id=1):
