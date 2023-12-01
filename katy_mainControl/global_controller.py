@@ -36,10 +36,10 @@ class GlobalController:
         self.cached_message = None
 
     def notify_on_recognition(self, message: NotificationMessage):
-        print(message)
         if message == NotificationMessage.FORCE_STOP:
             self.api_adapter.send_stop_request()
 
+        print(f"{message} [cached was: {self.cached_message}]")
         if message != self.cached_message:
             print("not cached -> execute")
             self.cached_message = message
