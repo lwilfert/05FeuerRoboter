@@ -15,7 +15,7 @@ class CameraAnalyst(Component):
         self.listener = listener
 
     def get_target(self):
-        return self.camera_stream()
+        return self.camera_stream
 
     def camera_stream(self):
         pipe = rs.pipeline()
