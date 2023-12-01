@@ -42,6 +42,7 @@ class GlobalController:
         print(f"{message} [cached was: {self.cached_message}]")
         if message != self.cached_message:
             print("not cached -> execute")
+            print(f"left: {message == NotificationMessage.LEFT}")
             self.cached_message = message
             if message == NotificationMessage.FORCE_STOP:
                 self.api_adapter.send_stop_request()
@@ -104,8 +105,8 @@ class GlobalController:
 
 
 ctl = GlobalController()
-var = NotificationMessage.LEFT
-print(var == NotificationMessage.LEFT)
+var = NotificationMessage.RIGHT
+print(var == NotificationMessage.RIGHT)
 
 
 def start(destination_id=1):
