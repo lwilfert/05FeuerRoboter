@@ -48,6 +48,7 @@ class GlobalController:
             elif message == NotificationMessage.RIGHT:
                 self.api_adapter.send_right_request()
             elif message == NotificationMessage.LEFT:
+                print("received left")
                 self.api_adapter.send_left_request()
             elif message == NotificationMessage.CENTER:
                 self.api_adapter.send_center_request()
