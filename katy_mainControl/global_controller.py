@@ -73,6 +73,7 @@ class GlobalController:
         # simulate recognition of extinguished fire:
         print("exstinguishing...")
         time.sleep(3)
+        print("fire dead")
         self.pump_ctl.stop_pumping_water()
 
         self.u_turn()

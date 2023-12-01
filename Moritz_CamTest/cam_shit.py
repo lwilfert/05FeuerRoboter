@@ -1,3 +1,4 @@
+import time
 from time import sleep
 from turtle import pos
 
@@ -18,6 +19,9 @@ class CameraAnalyst(Component):
         return self.camera_stream
 
     def camera_stream(self):
+        time.sleep(2)
+        self.listener.notify_on_recognition(NotificationMessage.DESTINATION_REACHED)
+        return
         pipe = rs.pipeline()
         config = rs.config()
         config.enable_stream(rs.stream.color, 640, 480, rs.format.bgr8, 60)
