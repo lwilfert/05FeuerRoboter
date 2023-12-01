@@ -42,6 +42,7 @@ class GlobalController:
         print(f"{message} [cached was: {self.cached_message}]")
         if message != self.cached_message:
             print("not cached -> execute")
+            print(f"types: {type(message)}, {type(NotificationMessage.LEFT)}, {type(message)==type(NotificationMessage.LEFT)}")
             print(f"left: {message == NotificationMessage.LEFT}")
             self.cached_message = message
             if message == NotificationMessage.FORCE_STOP:
