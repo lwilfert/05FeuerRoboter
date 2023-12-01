@@ -6,7 +6,8 @@ from katy_mainControl.abstract_component import Component
 
 
 class BlueLightSwitch(Component):
-    output_pin = 18
+    def __init__(self):
+        self.output_pin = 18
 
     def get_target(self):
         return self.blink_led()
