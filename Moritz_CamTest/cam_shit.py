@@ -102,7 +102,7 @@ class CameraAnalyst(Component):
         # send_stop_request()
 
     def detect_pattern(self, camera_image):
-        pattern_image = cv2.imread("flamme.jpg")
+        pattern_image = cv2.imread("/home/jens/repo/Moritz_CamTest/flamme.jpg")
 
         # Check if the pattern image is loaded successfully
         if pattern_image is None:
