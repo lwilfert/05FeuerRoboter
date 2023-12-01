@@ -39,7 +39,7 @@ class GlobalController:
         if message.value == NotificationMessage.FORCE_STOP.value:
             self.api_adapter.send_stop_request()
 
-        if message.value != self.cached_message.value:
+        if self.cached_message is None or message.value != self.cached_message.value:
             self.cached_message = message
             if message.value == NotificationMessage.FORCE_STOP.value:
                 self.api_adapter.send_stop_request()
