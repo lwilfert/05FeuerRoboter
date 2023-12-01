@@ -33,6 +33,7 @@ class GlobalController:
     def __init__(self):
         self.api_adapter = ApiAdapter(ip="192.168.171.85", port=5000)
         self.sound_player = SoundPlayer()
+        self.sound_player.connect_bt()
         self.blue_light = BlueLightSwitch()
         self.line_analyst = CameraAnalyst(self.notify_on_recognition)
         self.intersection_guide = IntersectionGuide()
@@ -96,7 +97,7 @@ class GlobalController:
             self.blue_light.start()
             self.sound_player.start()
         self.line_analyst.start()
-        self.api_adapter.send_go_request()
+        # self.api_adapter.send_go_request()
 
     def set_destination_home(self):
         self.needs_privileges = False
