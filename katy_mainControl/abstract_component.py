@@ -1,7 +1,7 @@
 from abc import abstractmethod
 from enum import Enum
 
-from katy_mainControl.killable_thread import KillableThread
+from killable_thread import KillableThread
 
 
 class NotificationMessage(Enum):
