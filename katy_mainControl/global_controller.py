@@ -64,10 +64,11 @@ class GlobalController:
             self.api_adapter.send_right_request()
 
     def reach_destination(self):
+        print("reach dest")
         self.api_adapter.send_stop_request()
         self.sound_player.stop()
         self.blue_light.stop()
-        self.line_analyst.stop()
+        # self.line_analyst.stop()
 
         print("foo")
         self.pump_ctl.start_pumping_water()
