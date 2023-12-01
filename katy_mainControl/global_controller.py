@@ -43,7 +43,7 @@ class GlobalController:
         if message != self.cached_message:
             print("not cached -> execute")
             print(f"types: {type(message)}, {type(NotificationMessage.LEFT)}, {type(message)==type(NotificationMessage.LEFT)}")
-            print(f"left: {message.value == NotificationMessage.LEFT.value}")
+            print(f"values: {message.value}, {NotificationMessage.LEFT.value}, {message.value == NotificationMessage.LEFT.value}")
             self.cached_message = message
             if message == NotificationMessage.FORCE_STOP:
                 self.api_adapter.send_stop_request()
