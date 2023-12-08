@@ -20,7 +20,7 @@ class CameraAnalyst(Component):
 
     def camera_stream(self):
         time.sleep(2)
-        self.listenerCallback.notify_on_recognition(NotificationMessage.DESTINATION_REACHED)
+        self.listenerCallback(NotificationMessage.DESTINATION_REACHED)
         return
         pipe = rs.pipeline()
         config = rs.config()
