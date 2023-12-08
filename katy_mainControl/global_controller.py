@@ -35,7 +35,7 @@ class GlobalController:
         self.needs_privileges = False
         self.cached_message = None
 
-    def notify_on_recognition(self, message: NotificationMessage):
+    def notify_on_recognition(self, message: NotificationMessage, value: int=-1):
         if message.value == NotificationMessage.FORCE_STOP.value:
             self.api_adapter.send_stop_request()
 
@@ -47,9 +47,15 @@ class GlobalController:
             if message.value == NotificationMessage.FORCE_STOP.value:
                 self.api_adapter.send_stop_request()
             elif message.value == NotificationMessage.RIGHT.value:
-                self.api_adapter.send_right_request()
+                if value == -1:
+                    self.api_adapter.send_right_request()
+                else:
+                    self.api_adapter.send_right_request(value)
             elif message.value == NotificationMessage.LEFT.value:
-                self.api_adapter.send_left_request()
+                if value == -1:
+                    self.api_adapter.send_left_request()
+                else:
+                    self.api_adapter.send_left_request(value)
             elif message.value == NotificationMessage.CENTER.value:
                 self.api_adapter.send_center_request()
             elif message.value == NotificationMessage.INTERSECTION.value:
