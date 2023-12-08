@@ -36,7 +36,6 @@ class GlobalController:
         self.cached_message = None
 
     def notify_on_recognition(self, message: NotificationMessage):
-        print("callback ok")
         if message.value == NotificationMessage.FORCE_STOP.value:
             self.api_adapter.send_stop_request()
 
