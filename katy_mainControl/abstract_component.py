@@ -24,13 +24,12 @@ class Component:
         ...
 
     def start(self):
-        if not self.thread.isAlive():
+        if not self.thread.is_alive():
             print(f"started")
             self.thread.start()
         else:
             print("still running")
 
     def stop(self):
-        foo = Thread()
         self.thread.kill()
         self.thread = KillableThread(target=self.target)
