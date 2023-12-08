@@ -28,7 +28,6 @@ class GlobalController:
         self.sound_player = SoundPlayer("/home/jens/repo/sirene")
         self.sound_player.connect_bt()
         self.blue_light = BlueLightSwitch()
-        # TODO: fix dass es sich nicht selber killt wenn stop gecallt wird
         self.line_analyst = CameraAnalyst(self.notify_on_recognition)
         self.intersection_guide = IntersectionGuide()
         self.pump_ctl = WaterPump()

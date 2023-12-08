@@ -43,6 +43,9 @@ class CameraAnalyst(Component):
             pipe.stop()
             cv2.destroyAllWindows()
 
+    # TODO @Moritz: wenn keine Linie mehr sichtbar, sende FORCE_STOP request
+    # self.listenerCallback(NotificationMessage.FORCE_STOP)
+
     def detect_line(self, color_image):
         # Convert the frame to HSV color space
         hsv = cv2.cvtColor(color_image, cv2.COLOR_BGR2HSV)
