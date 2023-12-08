@@ -11,16 +11,16 @@ from katy_mainControl.abstract_component import Component, NotificationMessage
 
 
 class CameraAnalyst(Component):
-    def __init__(self, listener):
+    def __init__(self, listenerCallback):
         super().__init__()
-        self.listener = listener
+        self.listenerCallback = listenerCallback
 
     def get_target(self):
         return self.camera_stream
 
     def camera_stream(self):
         time.sleep(2)
-        self.listener.notify_on_recognition(NotificationMessage.DESTINATION_REACHED)
+        self.listenerCallback.notify_on_recognition(NotificationMessage.DESTINATION_REACHED)
         return
         pipe = rs.pipeline()
         config = rs.config()
@@ -88,7 +88,7 @@ class CameraAnalyst(Component):
                     position = NotificationMessage.CENTER
                     # send_left_request()
 
-                self.listener.notify_on_recognition(position)
+                self.listenerCallback(position)
                 sleep(0.5)
 
                 # Draw line in picture
@@ -129,4 +129,4 @@ class CameraAnalyst(Component):
 
         # If any match is found, send destination reached message
         if locations[0].size > 0:
-            self.listener.notify_on_recognition(NotificationMessage.DESTINATION_REACHED)
+            self.listenerCallback(NotificationMessage.DESTINATION_REACHED)

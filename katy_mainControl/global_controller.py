@@ -27,9 +27,8 @@ class GlobalController:
         self.sound_player = SoundPlayer("/home/jens/repo/sirene")
         self.sound_player.connect_bt()
         self.blue_light = BlueLightSwitch()
-        print("blue light init finished")
         # TODO: fix dass es sich nicht selber killt wenn stop gecallt wird
-        self.line_analyst = CameraAnalyst(self)
+        self.line_analyst = CameraAnalyst(self.notify_on_recognition)
         self.intersection_guide = IntersectionGuide()
         self.pump_ctl = WaterPump()
 
@@ -37,6 +36,7 @@ class GlobalController:
         self.cached_message = None
 
     def notify_on_recognition(self, message: NotificationMessage):
+        print("callback ok")
         if message.value == NotificationMessage.FORCE_STOP.value:
             self.api_adapter.send_stop_request()
 
