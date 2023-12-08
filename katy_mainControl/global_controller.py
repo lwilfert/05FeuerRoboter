@@ -23,6 +23,7 @@ class GlobalController:
     home_id = 0
 
     def __init__(self):
+        self.busy  =False
         self.api_adapter = ApiAdapter(ip="192.168.171.85", port=5000)
         self.sound_player = SoundPlayer("/home/jens/repo/sirene")
         self.sound_player.connect_bt()
@@ -38,6 +39,9 @@ class GlobalController:
     def notify_on_recognition(self, message: NotificationMessage):
         if message.value == NotificationMessage.FORCE_STOP.value:
             self.api_adapter.send_stop_request()
+
+        if self.busy:
+            return
 
         if self.cached_message is None or message.value != self.cached_message.value:
             self.cached_message = message
@@ -69,6 +73,7 @@ class GlobalController:
         self.sound_player.stop()
         self.blue_light.stop()
         # self.line_analyst.stop()
+        self.busy = True
 
         print("foo")
         self.pump_ctl.start_pumping_water()
@@ -81,6 +86,7 @@ class GlobalController:
         self.u_turn()
         self.intersection_guide.reach_dest()
         self.set_destination_home()
+        self.busy = False
         self.start_drive_to_destination(self.home_id)
 
 

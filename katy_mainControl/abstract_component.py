@@ -2,6 +2,7 @@ from abc import abstractmethod
 from enum import Enum
 
 from killable_thread import KillableThread
+from threading import Thread
 
 
 class NotificationMessage(Enum):
@@ -23,9 +24,13 @@ class Component:
         ...
 
     def start(self):
-        print(f"started")
-        self.thread.start()
+        if not self.thread.isAlive():
+            print(f"started")
+            self.thread.start()
+        else:
+            print("still running")
 
     def stop(self):
+        foo = Thread()
         self.thread.kill()
         self.thread = KillableThread(target=self.target)
