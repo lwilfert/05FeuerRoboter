@@ -1,55 +1,52 @@
+import time
 from time import sleep
+from turtle import pos
 
 import cv2
 import numpy as np
-import requests
 import pyrealsense2 as rs
 from PIL import Image
 
-URI = "http://127.0.0.1:5000"
+from katy_mainControl.abstract_component import Component, NotificationMessage
 
 
-def capture_frames():
-    pipe = rs.pipeline()
-    config = rs.config()
-    config.enable_stream(rs.stream.color, 640, 480, rs.format.bgr8, 60)
-    active = False
+class CameraAnalyst(Component):
+    def __init__(self, listenerCallback):
+        super().__init__()
+        self.listenerCallback = listenerCallback
 
-    i = 0
+    def get_target(self):
+        return self.camera_stream
 
-    while i < 10:
-        if not active:
+    def camera_stream(self):
+        pipe = rs.pipeline()
+        config = rs.config()
+        config.enable_stream(rs.stream.color, 640, 480, rs.format.bgr8, 60)
+
+        try:
             pipe.start(config)
-            active = True
+            while True:
+                frames = pipe.wait_for_frames()
+                color_frame = frames.get_color_frame()
+                color_image = np.asanyarray(color_frame.get_data())
 
-        frames = pipe.wait_for_frames()
-        color_frame = frames.get_color_frame()
-        color_image = np.asanyarray(color_frame.get_data())
+                self.detect_line(color_image)
+                self.detect_pattern(color_image)
 
-        img = Image.fromarray(cv2.cvtColor(color_image, cv2.COLOR_BGR2RGB))
+                # img = Image.fromarray(cv2.cvtColor(color_image, cv2.COLOR_BGR2RGB))
+                # img.save(f"/home/jens/Desktop/Moritz_CamTest/{i}.jpg", 'JPEG', quality=50)
 
-        img.save(f"/home/jens/Desktop/Moritz_CamTest/{i}.jpg", 'JPEG', quality=50)
-        print("cool funktioniert")
+        except (ValueError, FileNotFoundError) as error:
+            print(error)
 
-        i += 1
+        finally:
+            pipe.stop()
+            cv2.destroyAllWindows()
 
+    # TODO @Moritz: wenn keine Linie mehr sichtbar, sende FORCE_STOP request
+    # self.listenerCallback(NotificationMessage.FORCE_STOP)
 
-def detect_line():
-    pipe = rs.pipeline()
-    config = rs.config()
-    config.enable_stream(rs.stream.color, 640, 480, rs.format.bgr8, 60)
-    active = False
-    i = 0
-
-    while True:
-        if not active:
-            pipe.start(config)
-            active = True
-
-        frames = pipe.wait_for_frames()
-        color_frame = frames.get_color_frame()
-        color_image = np.asanyarray(color_frame.get_data())
-
+    def detect_line(self, color_image):
         # Convert the frame to HSV color space
         hsv = cv2.cvtColor(color_image, cv2.COLOR_BGR2HSV)
 
@@ -82,23 +79,23 @@ def detect_line():
                 # Determine whether the line is on the left, right, or center
                 frame_center = color_image.shape[1] // 2
                 if cx < frame_center - 40:
-                    position = "left"
+                    position = NotificationMessage.LEFT
                     # send_left_request()
                 elif cx > frame_center + 40:
-                    position = "right"
+                    position = NotificationMessage.RIGHT
                     # send_right_request()
                 else:
-                    position = "center"
+                    position = NotificationMessage.CENTER
                     # send_left_request()
 
-                print(position)
+                self.listenerCallback(position)
                 sleep(0.5)
-                i += 1
 
                 # Draw line in picture
                 # cv2.drawContours(color_image, [largest_contour], -1, (0, 255, 0), 2)
                 # cv2.putText(color_image, position, (cx, cy), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (150, 255, 150), 2)
 
+        # If this ever gets used again then refactor into camera_stream
         # # Display the frame
         # cv2.imshow('Frame', img)
         #
@@ -108,78 +105,28 @@ def detect_line():
         #     break
         # send_stop_request()
 
+    def detect_pattern(self, camera_image):
+        pattern_image = cv2.imread("/home/jens/repo/Moritz_CamTest/flamme.jpg")
 
-def detect_pattern(camera_image):
-    pattern_image = cv2.imread("flamme.jpg")
+        # Check if the pattern image is loaded successfully
+        if pattern_image is None:
+            raise FileNotFoundError(f"Error: Unable to load the pattern image at '{pattern_image}'.")
 
-    # Check if the pattern image is loaded successfully
-    if pattern_image is None:
-        raise FileNotFoundError(f"Error: Unable to load the pattern image at '{pattern_image}'.")
+        # Check if the input image and pattern image have compatible sizes
+        if camera_image.shape[0] < pattern_image.shape[0] or camera_image.shape[1] < pattern_image.shape[1]:
+            raise ValueError("Error: The input image is smaller than the pattern image.")
 
-    # Check if the input image and pattern image have compatible sizes
-    if camera_image.shape[0] < pattern_image.shape[0] or camera_image.shape[1] < pattern_image.shape[1]:
-        raise ValueError("Error: The input image is smaller than the pattern image.")
+        # Convert images to grayscale
+        input_gray = cv2.cvtColor(camera_image, cv2.COLOR_BGR2GRAY)
+        pattern_gray = cv2.cvtColor(pattern_image, cv2.COLOR_BGR2GRAY)
 
-    # Convert images to grayscale
-    input_gray = cv2.cvtColor(camera_image, cv2.COLOR_BGR2GRAY)
-    pattern_gray = cv2.cvtColor(pattern_image, cv2.COLOR_BGR2GRAY)
+        # Use template matching
+        result = cv2.matchTemplate(input_gray, pattern_gray, cv2.TM_CCOEFF_NORMED)
 
-    # Use template matching
-    result = cv2.matchTemplate(input_gray, pattern_gray, cv2.TM_CCOEFF_NORMED)
+        # Set a threshold to determine if the pattern is found
+        threshold = 0.8
+        locations = np.where(result >= threshold)
 
-    # Set a threshold to determine if the pattern is found
-    threshold = 0.8
-    locations = np.where(result >= threshold)
-
-    # If any match is found, return True
-    result = locations[0].size > 0
-    print(f"Pattern detected: {result}")
-
-
-# No difference between URI/right and URI/left, so right is always used
-def send_right_request():
-    url = f"{URI}/right"
-    body = {"value": 70}
-
-    response = requests.post(url, json=body)
-    print(response.text)
-
-    # sleep(3)
-    # stop_control_request()
-
-
-def send_left_request():
-    url = f"{URI}/right"
-    body = {"value": 110}
-
-    response = requests.post(url, json=body)
-    print(response.text)
-
-
-def send_center_request():
-    url = f"{URI}/right"
-    body = {"value": 90}
-
-    response = requests.post(url, json=body)
-    print(response.text)
-
-
-def send_start_request():
-    url = f"{URI}/go"
-    body = {"value": 0.12}
-
-    response = requests.post(url, json=body)
-    print(response.text)
-
-
-def send_stop_request():
-    url = f"{URI}/stop"
-
-    response = requests.post(url)
-    print(response.text)
-
-
-if __name__ == '__main__':
-    # capture_frames()
-    detect_line()
-    detect_pattern()
+        # If any match is found, send destination reached message
+        if locations[0].size > 0:
+            self.listenerCallback(NotificationMessage.DESTINATION_REACHED)

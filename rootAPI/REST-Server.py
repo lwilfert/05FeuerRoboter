@@ -3,7 +3,7 @@ import time
 from flask import Flask, request, jsonify, send_file
 from flask_cors import CORS
 import subprocess
-import io
+from katy_mainControl import global_controller as gc
 
 app = Flask(__name__)
 CORS(app) 
@@ -22,11 +22,12 @@ def test(times):
 def start(zielID=0):
     #hier Katy functionality einbinden.
     #zum testen mal blinken:
-    script_path = '../luwiBlaulicht/blaulicht.py'
-    blaulicht = subprocess.Popen(['python3', script_path])
-    time.sleep(5)
-    blaulicht.terminate()
-    blaulicht.wait()
+    # script_path = '../luwiBlaulicht/blaulicht.py'
+    # blaulicht = subprocess.Popen(['python3', script_path])
+    # time.sleep(5)
+    # blaulicht.terminate()
+    # blaulicht.wait()
+    gc.start()
 
 
 # REST-Endpunkte für die verschiedenen Befehle

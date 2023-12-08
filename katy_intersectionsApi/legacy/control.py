@@ -77,6 +77,9 @@ class Car:
         if not self.destination == "H":
             self.mechanically_pump()
 
+    def get_current_direction(self):
+        return self.current_direction
+
     def mechanically_steer(self):
         print(f'\tsteer {self.current_direction.name}')
 
