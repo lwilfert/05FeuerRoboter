@@ -74,21 +74,26 @@ class CameraAnalyst(Component):
                 cx = int(M["m10"] / M["m00"])  # "m10" = sum of all x coordinates
                 cy = int(M["m01"] / M["m00"])  # "m01" = sum of all y coordinate
 
-                # send_start_request()
+                frame_width = color_image.shape[1]
+                position_range = frame_width // 5  # Divide the frame width into 5 equal parts
 
-                # Determine whether the line is on the left, right, or center
-                frame_center = color_image.shape[1] // 2
-                if cx < frame_center - 40:
+                if cx < position_range:
                     position = NotificationMessage.LEFT
-                    # send_left_request()
-                elif cx > frame_center + 40:
-                    position = NotificationMessage.RIGHT
-                    # send_right_request()
-                else:
+                    value = 60
+                elif position_range <= cx < 2 * position_range:
+                    position = NotificationMessage.LEFT
+                    value = 75
+                elif 2 * position_range <= cx < 3 * position_range:
                     position = NotificationMessage.CENTER
-                    # send_left_request()
+                    value = 90
+                elif 3 * position_range <= cx < 4 * position_range:
+                    position = NotificationMessage.RIGHT
+                    value = 105
+                else:
+                    position = NotificationMessage.RIGHT
+                    value = 120
 
-                self.listenerCallback(position)
+                self.listenerCallback(position, value)
                 sleep(0.5)
 
                 # Draw line in picture
