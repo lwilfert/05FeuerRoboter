@@ -36,37 +36,6 @@ class GlobalController:
         self.cached_message = None
         self.cached_value = None
 
-    # def notify_on_recognition(self, message: NotificationMessage, steeringValue: int=-1):
-    #     if message.value == NotificationMessage.FORCE_STOP.value:
-    #         self.api_adapter.send_stop_request()
-    #
-    #     if self.busy:
-    #         return
-    #
-    #
-    #     if self.cached_message is None or message.value != self.cached_message.value:
-    #         self.cached_message = message
-    #         if message.value == NotificationMessage.FORCE_STOP.value:
-    #             self.api_adapter.send_stop_request()
-    #         elif message.value == NotificationMessage.RIGHT.value:
-    #             if steeringValue == -1:
-    #                 self.api_adapter.send_right_request()
-    #             else:
-    #                 self.api_adapter.send_right_request(steeringValue)
-    #         elif message.value == NotificationMessage.LEFT.value:
-    #             if steeringValue == -1:
-    #                 self.api_adapter.send_left_request()
-    #             else:
-    #                 self.api_adapter.send_left_request(steeringValue)
-    #         elif message.value == NotificationMessage.CENTER.value:
-    #             self.api_adapter.send_center_request()
-    #         elif message.value == NotificationMessage.INTERSECTION.value:
-    #             self.intersection_guide.find_intersection()
-    #             direction = self.intersection_guide.get_current_direction()
-    #             self.turn_after_intersection(direction)
-    #         elif message.value == NotificationMessage.DESTINATION_REACHED.value:
-    #             self.reach_destination()
-
     def notify_on_forcestop(self):
         self.api_adapter.send_stop_request()
         self.cached_message = NotificationMessage.FORCE_STOP
