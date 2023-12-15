@@ -95,16 +95,16 @@ class CameraAnalyst(Component):
                     value = 120
                     self.listener.notify_on_right(value)
 
-                time.sleep(0.05)
+                time.sleep(0.1)
                 # Draw line in picture
                 # cv2.drawContours(color_image, [largest_contour], -1, (0, 255, 0), 2)
                 # cv2.putText(color_image, position, (cx, cy), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (150, 255, 150), 2)
         else:
             self.timeout_counter += 1
             print(self.timeout_counter)
-            if self.timeout_counter == 100:
+            if self.timeout_counter == 10:
                 self.listener.notify_on_forcestop()
-            time.sleep(0.05)
+            time.sleep(0.1)
 
         # If this ever gets used again then refactor into camera_stream
         # # Display the frame
