@@ -18,7 +18,7 @@ class CameraAnalyst(Component):
         self.listener = listener
         self.timeout_counter = 0
         api_key = ""
-        with open("config") as file:
+        with open("/home/jens/repo/Moritz_CamTest/config") as file:
             for i, line in enumerate(file):
                 if i > 0:
                     break
