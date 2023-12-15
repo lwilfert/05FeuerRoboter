@@ -11,9 +11,9 @@ from katy_mainControl.abstract_component import Component, NotificationMessage
 
 
 class CameraAnalyst(Component):
-    def __init__(self, listenerCallback):
+    def __init__(self, listener):
         super().__init__()
-        self.listenerCallback = listenerCallback
+        self.listener = listener
 
     def get_target(self):
         return self.camera_stream
@@ -83,32 +83,27 @@ class CameraAnalyst(Component):
                 position_range = frame_width // 5  # Divide the frame width into 5 equal parts
 
                 if cx < position_range:
-                    position = NotificationMessage.LEFT
                     value = 60
+                    self.listener.notify_on_left(value)
                 elif position_range <= cx < 2 * position_range:
-                    position = NotificationMessage.LEFT
                     value = 75
+                    self.listener.notify_on_left(value)
                 elif 2 * position_range <= cx < 3 * position_range:
-                    position = NotificationMessage.CENTER
-                    value = 90
+                    self.listener.notify_on_center()
                 elif 3 * position_range <= cx < 4 * position_range:
-                    position = NotificationMessage.RIGHT
                     value = 105
+                    self.listener.notify_on_right(value)
                 else:
-                    position = NotificationMessage.RIGHT
                     value = 120
-
-                self.listenerCallback(position, value)
-                sleep(0.5)
+                    self.listener.notify_on_right(value)
 
                 # Draw line in picture
                 # cv2.drawContours(color_image, [largest_contour], -1, (0, 255, 0), 2)
                 # cv2.putText(color_image, position, (cx, cy), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (150, 255, 150), 2)
         else:
             counter += 1
-            if counter == 2:
-                self.listenerCallback(NotificationMessage.FORCE_STOP)
-            sleep(0.5)
+            if counter == 1000:
+                self.listener.notify_on_forcestop()
 
         # If this ever gets used again then refactor into camera_stream
         # # Display the frame
@@ -144,4 +139,4 @@ class CameraAnalyst(Component):
 
         # If any match is found, send destination reached message
         if locations[0].size > 0:
-            self.listenerCallback(NotificationMessage.DESTINATION_REACHED)
+            self.listener.notify_on_destination_reached()
