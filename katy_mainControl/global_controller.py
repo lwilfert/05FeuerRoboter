@@ -122,22 +122,24 @@ class GlobalController:
         if self.needs_privileges:
             self.sound_player.stop()
             self.blue_light.stop()
-        # self.line_analyst.stop()
-        self.busy = True
+            # self.line_analyst.stop()
+            self.busy = True
 
-        print("foo")
-        self.pump_ctl.start_pumping_water()
-        # simulate recognition of extinguished fire:
-        print("exstinguishing...")
-        time.sleep(3)
-        print("fire dead")
-        self.pump_ctl.stop_pumping_water()
+            print("foo")
+            self.pump_ctl.start_pumping_water()
+            # simulate recognition of extinguished fire:
+            print("exstinguishing...")
+            time.sleep(3)
+            print("fire dead")
+            self.pump_ctl.stop_pumping_water()
 
-        self.u_turn()
-        self.intersection_guide.reach_dest()
-        self.set_destination_home()
-        self.busy = False
-        self.start_drive_to_destination(self.home_id)
+            self.u_turn()
+            self.intersection_guide.reach_dest()
+            self.set_destination_home()
+            self.busy = False
+            self.start_drive_to_destination(self.home_id)
+        else:
+            print("reached fire station")
 
 
     def u_turn(self):
