@@ -85,6 +85,8 @@ class GlobalController:
             else:
                 self.api_adapter.send_left_request(steering_value)
                 print(f"left {steering_value}")
+        self.cached_message = NotificationMessage.LEFT
+        self.cached_value = steering_value
 
     def notify_on_right(self, steering_value : int = -1):
         if self.cached_message is None or self.cached_message != NotificationMessage.RIGHT or self.cached_value != steering_value:
@@ -93,7 +95,8 @@ class GlobalController:
             else:
                 self.api_adapter.send_right_request(steering_value)
                 print(f"right {steering_value}")
-
+        self.cached_message = NotificationMessage.RIGHT
+        self.cached_value = steering_value
 
     def notify_on_destination_reached(self):
         self.reach_destination()
@@ -104,6 +107,7 @@ class GlobalController:
         self.intersection_guide.find_intersection()
         direction = self.intersection_guide.get_current_direction()
         self.turn_after_intersection(direction)
+
 
     def turn_after_intersection(self, direction):
         # TODO: check if this is mechanically o.k.
