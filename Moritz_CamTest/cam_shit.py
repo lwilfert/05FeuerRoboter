@@ -5,6 +5,8 @@ from turtle import pos
 import cv2
 import numpy as np
 import pyrealsense2 as rs
+from roboflow import Roboflow
+import json
 from PIL import Image
 
 from katy_mainControl.abstract_component import Component, NotificationMessage
@@ -15,6 +17,15 @@ class CameraAnalyst(Component):
         super().__init__()
         self.listener = listener
         self.timeout_counter = 0
+        api_key = ""
+        with open("config") as file:
+            for i, line in enumerate(file):
+                if i > 0:
+                    break
+                api_key = line
+        rf = Roboflow(api_key=api_key)
+        project = rf.workspace().project("car_stopping_points")
+        self.model = project.version(3).model
 
     def get_target(self):
         return self.camera_stream
@@ -118,27 +129,6 @@ class CameraAnalyst(Component):
         # send_stop_request()
 
     def detect_pattern(self, camera_image):
-        pattern_image = cv2.imread("/home/jens/repo/Moritz_CamTest/flamme.jpg")
-
-        # Check if the pattern image is loaded successfully
-        if pattern_image is None:
-            raise FileNotFoundError(f"Error: Unable to load the pattern image at '{pattern_image}'.")
-
-        # Check if the input image and pattern image have compatible sizes
-        if camera_image.shape[0] < pattern_image.shape[0] or camera_image.shape[1] < pattern_image.shape[1]:
-            raise ValueError("Error: The input image is smaller than the pattern image.")
-
-        # Convert images to grayscale
-        input_gray = cv2.cvtColor(camera_image, cv2.COLOR_BGR2GRAY)
-        pattern_gray = cv2.cvtColor(pattern_image, cv2.COLOR_BGR2GRAY)
-
-        # Use template matching
-        result = cv2.matchTemplate(input_gray, pattern_gray, cv2.TM_CCOEFF_NORMED)
-
-        # Set a threshold to determine if the pattern is found
-        threshold = 0.8
-        locations = np.where(result >= threshold)
-
-        # If any match is found, send destination reached message
-        if locations[0].size > 0:
+        output = self.model.predict(camera_image, confidence=95, overlap=30).json()
+        if output['class'] is not None:
             self.listener.notify_on_destination_reached()
