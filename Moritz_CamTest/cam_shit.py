@@ -97,13 +97,16 @@ class CameraAnalyst(Component):
                     value = 120
                     self.listener.notify_on_right(value)
 
+                time.sleep(0.05)
                 # Draw line in picture
                 # cv2.drawContours(color_image, [largest_contour], -1, (0, 255, 0), 2)
                 # cv2.putText(color_image, position, (cx, cy), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (150, 255, 150), 2)
         else:
             counter += 1
-            if counter == 1000:
+            print(counter)
+            if counter == 100:
                 self.listener.notify_on_forcestop()
+            time.sleep(0.05)
 
         # If this ever gets used again then refactor into camera_stream
         # # Display the frame
