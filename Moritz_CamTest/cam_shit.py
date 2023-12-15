@@ -53,7 +53,6 @@ class CameraAnalyst(Component):
 
         finally:
             pipe.stop()
-            cv2.destroyAllWindows()
 
     # TODO @Moritz: wenn keine Linie mehr sichtbar, sende FORCE_STOP request
     # self.listenerCallback(NotificationMessage.FORCE_STOP)
