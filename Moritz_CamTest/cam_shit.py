@@ -129,5 +129,6 @@ class CameraAnalyst(Component):
 
     def detect_pattern(self, camera_image):
         output = self.model.predict(camera_image, confidence=95, overlap=30).json()
-        if output['class'] is not None:
+        print(f"json {output}")
+        if output['predictions'] is not None:
             self.listener.notify_on_destination_reached()
