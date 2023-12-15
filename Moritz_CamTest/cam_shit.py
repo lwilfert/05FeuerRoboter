@@ -14,6 +14,7 @@ class CameraAnalyst(Component):
     def __init__(self, listener):
         super().__init__()
         self.listener = listener
+        self.timeout_counter = 0
 
     def get_target(self):
         return self.camera_stream
@@ -64,11 +65,8 @@ class CameraAnalyst(Component):
         # Find contours in the mask
         contours, _ = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
 
-        # counter for the amount of time no yellow line was detected
-        counter = 0
-
         if len(contours) > 0:
-            counter = 0
+            self.timeout_counter = 0
 
             # Sort contours by area and select the largest one
             largest_contour = max(contours, key=cv2.contourArea)
@@ -102,9 +100,9 @@ class CameraAnalyst(Component):
                 # cv2.drawContours(color_image, [largest_contour], -1, (0, 255, 0), 2)
                 # cv2.putText(color_image, position, (cx, cy), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (150, 255, 150), 2)
         else:
-            counter += 1
-            print(counter)
-            if counter == 100:
+            self.timeout_counter += 1
+            print(self.timeout_counter)
+            if self.timeout_counter == 100:
                 self.listener.notify_on_forcestop()
             time.sleep(0.05)
 
