@@ -102,8 +102,9 @@ class CameraAnalyst(Component):
         else:
             self.timeout_counter += 1
             print(self.timeout_counter)
-            if self.timeout_counter == 10:
+            if self.timeout_counter == 15:
                 self.listener.notify_on_forcestop()
+                self.timeout_counter = 0
             time.sleep(0.1)
 
         # If this ever gets used again then refactor into camera_stream
