@@ -22,7 +22,7 @@ class CameraAnalyst(Component):
             for i, line in enumerate(file):
                 if i > 0:
                     break
-                api_key = line
+                api_key = line.strip()
         rf = Roboflow(api_key=api_key)
         project = rf.workspace().project("car_stopping_points")
         self.model = project.version(3).model
