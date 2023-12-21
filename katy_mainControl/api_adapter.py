@@ -2,7 +2,7 @@ import requests
 
 
 class ApiAdapter:
-    def __init__(self, ip: str = "192.168.171.85", port: int = 5000):
+    def __init__(self, ip: str = "192.168.171.91", port: int = 5000):
         self.base_url = f"http://{ip}:{port}"
 
     def send_go_request(self, speed=0.12):

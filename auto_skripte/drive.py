@@ -2,7 +2,7 @@ import time
 from time import sleep
 import requests
 
-ip = "192.168.171.85"
+ip = "192.168.171.91"
 
 def send_control_request():
     url = f"{ip}:5000/go"

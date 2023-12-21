@@ -4,7 +4,7 @@ import numpy as np
 import requests
 import pyrealsense2 as rs
 
-ip = "http://192.168.171.85:5000"
+ip = "http://192.168.171.91:5000"
 
 
 def extract_frames_with_opencv():

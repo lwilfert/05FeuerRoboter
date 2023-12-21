@@ -24,7 +24,7 @@ class GlobalController:
 
     def __init__(self):
         self.busy  =False
-        self.api_adapter = ApiAdapter(ip="192.168.171.85", port=5000)
+        self.api_adapter = ApiAdapter(ip="192.168.171.91", port=5000)
         self.sound_player = SoundPlayer("/home/jens/repo/sirene")
         self.sound_player.connect_bt()
         self.blue_light = BlueLightSwitch()
