@@ -1,8 +1,9 @@
 import time
 from time import sleep
 import requests
+from katy_mainControl.read_config import config
 
-ip = "192.168.171.91"
+ip = config["ip"]
 
 def send_control_request():
     url = f"{ip}:5000/go"

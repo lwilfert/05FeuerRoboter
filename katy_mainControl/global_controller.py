@@ -17,14 +17,14 @@ from luwiPowerSkript.waterpump import WaterPump
 
 # TODO: only temporary to "compile"
 from katy_intersectionsApi.intersection_guide import IntersectionGuide, Direction
-
+from read_config import config
 
 class GlobalController:
     home_id = 0
 
     def __init__(self):
         self.busy  =False
-        self.api_adapter = ApiAdapter(ip="192.168.171.91", port=5000)
+        self.api_adapter = ApiAdapter(ip=config["ip"], port=5000)
         self.sound_player = SoundPlayer("/home/jens/repo/sirene")
         self.sound_player.connect_bt()
         self.blue_light = BlueLightSwitch()
