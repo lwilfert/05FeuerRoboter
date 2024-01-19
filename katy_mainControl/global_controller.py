@@ -11,7 +11,7 @@ sys.path.append(parent)
 
 from sirene.player import SoundPlayer
 from luwiBlaulicht.blaulicht import BlueLightSwitch
-from api_adapter import ApiAdapter
+from api_adapter import ApiAdapter, TestApiAdapter
 from Moritz_CamTest.cam_shit import CameraAnalyst
 from luwiPowerSkript.waterpump import WaterPump
 
@@ -24,7 +24,7 @@ class GlobalController:
 
     def __init__(self):
         self.busy  =False
-        self.api_adapter = ApiAdapter(ip=config["ip"], port=5000)
+        self.api_adapter = TestApiAdapter(ip=config["ip"], port=5000)
         # self.sound_player = SoundPlayer("/home/jens/repo/sirene")
         # self.sound_player.connect_bt()
         self.blue_light = BlueLightSwitch()
