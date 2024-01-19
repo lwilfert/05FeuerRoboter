@@ -4,7 +4,7 @@ from turtle import pos
 
 import cv2
 import numpy as np
-import pyrealsense2 as rs
+import pyrealsense2.pyrealsense2 as rs
 from roboflow import Roboflow
 import json
 from PIL import Image
@@ -54,8 +54,6 @@ class CameraAnalyst(Component):
         finally:
             pipe.stop()
 
-    # TODO @Moritz: wenn keine Linie mehr sichtbar, sende FORCE_STOP request
-    # self.listenerCallback(NotificationMessage.FORCE_STOP)
 
     def detect_line(self, color_image):
         # Convert the frame to HSV color space
