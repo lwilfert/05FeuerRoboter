@@ -25,8 +25,8 @@ class GlobalController:
     def __init__(self):
         self.busy  =False
         self.api_adapter = ApiAdapter(ip=config["ip"], port=5000)
-        self.sound_player = SoundPlayer("/home/jens/repo/sirene")
-        self.sound_player.connect_bt()
+        # self.sound_player = SoundPlayer("/home/jens/repo/sirene")
+        # self.sound_player.connect_bt()
         self.blue_light = BlueLightSwitch()
         self.line_analyst = CameraAnalyst(self)
         self.intersection_guide = IntersectionGuide()
@@ -89,7 +89,7 @@ class GlobalController:
         print("reach dest")
         self.api_adapter.send_stop_request()
         if self.needs_privileges:
-            self.sound_player.stop()
+            # self.sound_player.stop()
             self.blue_light.stop()
             # self.line_analyst.stop()
             self.busy = True
@@ -119,7 +119,7 @@ class GlobalController:
     def start_drive_to_destination(self, destination_id=1):
         if self.needs_privileges:
             self.blue_light.start()
-            self.sound_player.start()
+            # self.sound_player.start()
         self.line_analyst.start()
         print("goo")
         self.api_adapter.send_go_request()
