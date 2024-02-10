@@ -6,7 +6,7 @@ class ApiAdapter:
     def __init__(self, ip: str = config["ip"], port: int = 5000):
         self.base_url = f"http://{ip}:{port}"
 
-    def send_go_request(self, speed=0.12):
+    def send_go_request(self, speed=0.18):
         url = f"{self.base_url}/go"
         body = {"value": speed}
 

@@ -89,28 +89,28 @@ class CameraAnalyst(Component):
                 position_range = frame_width // 5  # Divide the frame width into 5 equal parts
 
                 if cx < position_range:
-                    value = 60
+                    value = 150
                     self.listener.notify_on_left(value)
                 elif position_range <= cx < 2 * position_range:
-                    value = 75
+                    value = 120
                     self.listener.notify_on_left(value)
                 elif 2 * position_range <= cx < 3 * position_range:
                     self.listener.notify_on_center()
                 elif 3 * position_range <= cx < 4 * position_range:
-                    value = 105
+                    value = 60
                     self.listener.notify_on_right(value)
                 else:
-                    value = 120
+                    value = 30
                     self.listener.notify_on_right(value)
 
-                time.sleep(0.1)
+                # time.sleep(0.1)
                 # Draw line in picture
                 # cv2.drawContours(color_image, [largest_contour], -1, (0, 255, 0), 2)
                 # cv2.putText(color_image, position, (cx, cy), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (150, 255, 150), 2)
         else:
             self.timeout_counter += 1
             print(self.timeout_counter)
-            if self.timeout_counter == 15:
+            if self.timeout_counter == 7:
                 self.listener.notify_on_forcestop()
                 self.timeout_counter = 0
             time.sleep(0.1)
