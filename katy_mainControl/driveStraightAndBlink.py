@@ -8,12 +8,12 @@ sys.path.append(parent)
 from api_adapter import ApiAdapter, TestApiAdapter
 from luwiBlaulicht.blaulicht import BlueLightSwitch
 
-api = TestApiAdapter()
+api = ApiAdapter()
 lights = BlueLightSwitch()
 
 api.send_center_request()
 api.send_go_request()
 lights.start()
-time.sleep(6)
+time.sleep(4)
 api.send_stop_request()
 lights.stop()
