@@ -2,12 +2,9 @@
 import RPi.GPIO as GPIO
 import time
 
-from katy_mainControl.abstract_component import Component
 
-
-class BlueLightSwitch(Component):
+class BlueLightSwitch:
     def __init__(self):
-        super().__init__()
         self.output_pin = 17
         self.output_pin2 = 18
         print(f"initialized blue light {self.output_pin}")
@@ -32,10 +29,14 @@ class BlueLightSwitch(Component):
             while True:
                 time.sleep(1)
                 # Toggle the output every second
-                # print("Outputting {} to pin {}".format(curr_value, BlueLightSwitch.output_pin))
+                print("Outputting {} to pin {} and {}".format(curr_value, self.output_pin, self.output_pin2))
                 GPIO.output(self.output_pin, curr_value)
                 curr_value ^= GPIO.HIGH
                 GPIO.output(self.output_pin2, curr_value)
         finally:
             GPIO.cleanup()
 
+if __name__ == "__main__":
+    b = BlueLightSwitch()
+    while True:
+        b.blink_led()

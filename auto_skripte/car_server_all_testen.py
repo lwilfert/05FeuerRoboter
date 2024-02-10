@@ -4,7 +4,7 @@ import signal
 import cv2 # nur zum testen
 import numpy as np
 import time
-import pyrealsense2.pyrealsense2 as rs
+# import pyrealsense2 as rs
 from adafruit_servokit import ServoKit
 from flask import Flask, request, jsonify, send_file
 import io
@@ -36,8 +36,8 @@ kit.servo[SERVO].angle = FORWARD
 kit.continuous_servo[MOTOR].throttle = STOP
 
 # pipe = rs.pipeline()
-config = rs.config()
-config.enable_stream(rs.stream.color, 640, 480, rs.format.bgr8, 60)
+# config = rs.config()
+# config.enable_stream(rs.stream.color, 640, 480, rs.format.bgr8, 60)
 active = False
 
 # Load the YOLOv8 model
