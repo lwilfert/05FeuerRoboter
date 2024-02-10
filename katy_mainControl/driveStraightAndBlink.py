@@ -1,10 +1,14 @@
 import time
+import os
+import sys
 
-from katy_mainControl.api_adapter import ApiAdapter
+current = os.path.dirname(os.path.realpath(__file__))
+parent = os.path.dirname(current)
+sys.path.append(parent)
+from api_adapter import ApiAdapter, TestApiAdapter
 from luwiBlaulicht.blaulicht import BlueLightSwitch
 
-
-api = ApiAdapter()
+api = TestApiAdapter()
 lights = BlueLightSwitch()
 
 api.send_center_request()
